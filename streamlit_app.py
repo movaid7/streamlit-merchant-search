@@ -30,10 +30,10 @@ ctx = snowflake.connector.connect(
     ocsp_response_cache_filename = "/tmp/ocsp_response_cache")
 
 # Search Widget
-searchOption = st.radio('', ['UID','MERCHANT_ID','Email','Name','Surname'])
+searchOption = st.radio('', ['UID','MERCHANT_ID','Email','Name','Surname','Trading_Name'])
 st.subheader(f'Search by {searchOption}')
 searchText,sql = '',''
-if searchOption in ('Email','Name','Surname'):
+if searchOption in ('Email','Name','Surname','Trading_Name'):
     searchText = st.text_input('')
     sql= st.secrets["sql"] + f"{searchOption} LIKE '%{searchText}%'"
 else:
