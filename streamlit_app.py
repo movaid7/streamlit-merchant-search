@@ -29,35 +29,39 @@ ctx = snowflake.connector.connect(
     schema    = st.secrets["schema"],
     ocsp_response_cache_filename = "/tmp/ocsp_response_cache")
 
-# Search Widget
-searchOption = st.radio('', ['UID','MERCHANT_ID','Email','Name','Surname','Trading_Name','Mobile_Number'])
-st.subheader(f'Search by {searchOption}')
-searchText,sql = '',''
-numResults = 1
-if searchOption in ('Email','Name','Surname','Trading_Name','Mobile_Number'):   
-    searchText = st.text_input('')
-    sql= st.secrets["sql"] + f"{searchOption} LIKE '%{searchText}%'"
-    # numResults = 30
-    numResults = st.slider('Number of results returned', min_value=10, max_value=100)
-else:
-    searchText = st.number_input('',value=0, min_value=0)
-    sql = st.secrets["sql"] + f"{searchOption} = {searchText}"
-st.markdown("***")
-st.text(" \n")
 
-# Fetch & Display Results
-cur = ctx.cursor().execute(sql)
-ret = cur.fetchmany(numResults)
-if len(ret) > 1 and searchText != '':
-    df = pd.DataFrame(ret)
-    df.columns = st.secrets["columns"]
-    st.table(df)
-elif len(ret) == 1 and searchText != '':
-    df = pd.DataFrame(ret)
-    df.columns = st.secrets["columns"]
-    st.table(df)
-else:
-    st.subheader("No Results")
+password = st.text_input('Enter password to enable content',type="password")
+
+if password == st.secrets["appPass"]:
+    # Search Widget
+    searchOption = st.radio('', ['UID','MERCHANT_ID','Email','Name','Surname','Trading_Name','Mobile_Number'])
+    st.subheader(f'Search by {searchOption}')
+    searchText,sql = '',''
+    numResults = 1
+    if searchOption in ('Email','Name','Surname','Trading_Name','Mobile_Number'):   
+        searchText = st.text_input('')
+        sql= st.secrets["sql"] + f"{searchOption} LIKE '%{searchText}%'"
+        # numResults = 30
+        numResults = st.slider('Number of results returned', min_value=10, max_value=100)
+    else:
+        searchText = st.number_input('',value=0, min_value=0)
+        sql = st.secrets["sql"] + f"{searchOption} = {searchText}"
+    st.markdown("***")
+    st.text(" \n")
+
+    # Fetch & Display Results
+    cur = ctx.cursor().execute(sql)
+    ret = cur.fetchmany(numResults)
+    if len(ret) > 1 and searchText != '':
+        df = pd.DataFrame(ret)
+        df.columns = st.secrets["columns"]
+        st.table(df)
+    elif len(ret) == 1 and searchText != '':
+        df = pd.DataFrame(ret)
+        df.columns = st.secrets["columns"]
+        st.table(df)
+    else:
+        st.subheader("No Results")
 
 
 # cur = ctx.cursor().execute("SELECT \
