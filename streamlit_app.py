@@ -33,9 +33,12 @@ ctx = snowflake.connector.connect(
 searchOption = st.radio('', ['UID','MERCHANT_ID','Email','Name','Surname','Trading_Name'])
 st.subheader(f'Search by {searchOption}')
 searchText,sql = '',''
-if searchOption in ('Email','Name','Surname','Trading_Name'):
+numResults = 1
+if searchOption in ('Email','Name','Surname','Trading_Name'):   
     searchText = st.text_input('')
     sql= st.secrets["sql"] + f"{searchOption} LIKE '%{searchText}%'"
+    # numResults = 30
+    numResults = st.slider('Number of results returned', min_value=10, max_value=100)
 else:
     searchText = st.number_input('',value=0, min_value=0)
     sql = st.secrets["sql"] + f"{searchOption} = {searchText}"
@@ -44,7 +47,7 @@ st.text(" \n")
 
 # Fetch & Display Results
 cur = ctx.cursor().execute(sql)
-ret = cur.fetchmany(30)
+ret = cur.fetchmany(numResults)
 if len(ret) > 1 and searchText != '':
     df = pd.DataFrame(ret)
     df.columns = st.secrets["columns"]
