@@ -13,12 +13,6 @@ st.set_page_config(
     layout="wide"
     )
 
-"""
-# Merchant Search
-
-Search for merchants by any of the following properties:
-"""
-
 # Snowflake Creds
 ctx = snowflake.connector.connect(
     user      = st.secrets["user"],
@@ -29,10 +23,15 @@ ctx = snowflake.connector.connect(
     schema    = st.secrets["schema"],
     ocsp_response_cache_filename = "/tmp/ocsp_response_cache")
 
-
-password = st.text_input('Enter password to enable content',type="password")
+password = st.text_input('Enter password to enable content', type="password", help ='Request access if needed')
 
 if password == st.secrets["appPass"]:
+
+    """
+    # Merchant Search
+
+    Search for merchants by any of the following properties:
+    """
     # Search Widget
     searchOption = st.radio('', ['UID','MERCHANT_ID','Email','Name','Surname','Trading_Name','Mobile_Number'])
     st.subheader(f'Search by {searchOption}')
